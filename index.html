@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Portfolio Digital - Hadi</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter (Apple-like font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            --bg-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --text-color-secondary: #515154;
+            --header-color: #000000;
+            --panel-bg: rgba(255, 255, 255, 0.65);
+            --nav-bg: #e8e8ea;
+            --nav-indicator-bg: #ffffff;
+            --nav-text-active: #000000;
+            --nav-text-inactive: #515154;
+            --border-color: rgba(128, 128, 128, 0.15);
+            --interactive-bg: rgba(128, 128, 128, 0.1);
+            --interactive-bg-hover: rgba(128, 128, 128, 0.2);
+            --blob-color-1: #ffb703;
+            --blob-color-2: #fb8500;
+            --blob-color-3: #8ecae6;
+            --blob-color-4: #219ebc;
+            --blob-color-5: #ff006e;
+            --header-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #f5f5f7;
+            --text-color-secondary: #a1a1a6;
+            --header-color: #ffffff;
+            --panel-bg: rgba(29, 29, 31, 0.65);
+            --nav-bg: #2c2c2e;
+            --nav-indicator-bg: #515154;
+            --nav-text-active: #ffffff;
+            --nav-text-inactive: #a1a1a6;
+            --border-color: rgba(128, 128, 128, 0.25);
+            --interactive-bg: rgba(128, 128, 128, 0.2);
+            --interactive-bg-hover: rgba(128, 128, 128, 0.3);
+            --blob-color-1: #0a84ff;
+            --blob-color-2: #bf5af2;
+            --blob-color-3: #30d158;
+            --blob-color-4: #ff9f0a;
+            --blob-color-5: #ff453a;
+            --header-shadow: 0 2px 15px rgba(0,0,0,0.3);
+        }
+
+        /* --- Base Body Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+        }
+        
+        /* --- REFINED: Liquid Glass Background --- */
+        #liquid-bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: url(#goo); 
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            transition: background 0.5s ease;
+            animation: move 30s ease-in-out infinite;
+        }
+
+        .blob:nth-child(1) { width: 35vw; height: 35vw; min-width: 300px; min-height: 300px; top: -5%; left: -10%; background: var(--blob-color-1); animation-duration: 25s; }
+        .blob:nth-child(2) { width: 30vw; height: 30vw; min-width: 250px; min-height: 250px; top: 60%; left: 70%; background: var(--blob-color-2); animation-duration: 30s; animation-delay: -10s; }
+        .blob:nth-child(3) { width: 25vw; height: 25vw; min-width: 200px; min-height: 200px; top: 70%; left: 10%; background: var(--blob-color-3); animation-duration: 35s; animation-delay: -5s; }
+        .blob:nth-child(4) { width: 20vw; height: 20vw; min-width: 150px; min-height: 150px; top: 5%; left: 80%; background: var(--blob-color-4); animation-duration: 40s; animation-delay: -15s; }
+        .blob:nth-child(5) { width: 15vw; height: 15vw; min-width: 100px; min-height: 100px; top: 40%; left: 45%; background: var(--blob-color-5); animation-duration: 20s; animation-delay: -20s; }
+        
+        @keyframes move {
+            0%, 100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+            25% { transform: scale(1.3) translate(5vw, -8vw) rotate(120deg); }
+            50% { transform: scale(0.8) translate(-10vw, 10vw) rotate(240deg); }
+            75% { transform: scale(1.1) translate(-5vw, -5vw) rotate(360deg); }
+        }
+
+        /* --- Core Components --- */
+        .glass-panel {
+            background: var(--panel-bg); 
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.5s ease, box-shadow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.5s ease;
+        }
+
+        .animated-header {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-shadow: var(--header-shadow);
+        }
+        
+        .animated-header.is-visible { opacity: 1; transform: translateY(0); }
+
+        /* NEW: Typing animation for subtitle */
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.5rem; /* md:text-2xl */
+            background-color: var(--text-color-secondary);
+            animation: blink 1s infinite;
+            margin-left: 4px;
+            vertical-align: bottom;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        #content-container {
+            position: relative;
+            transition: height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .content-section {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .content-section.is-active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            transition-delay: 0.1s;
+        }
+
+        /* --- Navigation --- */
+        #navigation {
+            background-color: var(--nav-bg);
+            transition: background-color 0.5s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        #nav-indicator {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            background-color: var(--nav-indicator-bg);
+            z-index: 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease;
+        }
+        
+        .nav-button {
+            position: relative;
+            z-index: 1;
+            color: var(--nav-text-inactive);
+            transition: color 0.5s ease, transform 0.2s ease;
+        }
+        .nav-button:hover { transform: scale(1.05); }
+        .nav-button.is-active { color: var(--nav-text-active); }
+        
+        .nav-text {
+            display: inline-block;
+            vertical-align: middle;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: max-width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+        }
+
+        @media (min-width: 640px) { /* sm breakpoint */
+            .nav-text {
+                max-width: 100px;
+                opacity: 1;
+                margin-left: 0.5rem;
+            }
+        }
+
+        .theme-switcher-icon {
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            color: var(--nav-text-inactive);
+        }
+
+        .nav-button:hover .theme-switcher-icon, #theme-switcher:hover .theme-switcher-icon {
+            color: var(--nav-text-active);
+        }
+        
+        body:not(.dark-mode) .theme-switcher-icon.sun { opacity: 1; transform: rotate(0deg); }
+        body:not(.dark-mode) .theme-switcher-icon.moon { opacity: 0; transform: rotate(90deg); }
+        body.dark-mode .theme-switcher-icon.sun { opacity: 0; transform: rotate(-90deg); }
+        body.dark-mode .theme-switcher-icon.moon { opacity: 1; transform: rotate(0deg); }
+
+        /* --- Project Section --- */
+        .project-card {
+            transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--interactive-bg);
+        }
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.2);
+        }
+        /* NEW: Style for project images */
+        .project-image {
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+            border-radius: 0.75rem; /* rounded-xl */
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+        .project-card.hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+        .filter-btn {
+            background-color: var(--interactive-bg);
+            color: var(--text-color-secondary);
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            transform: scale(1.05);
+        }
+        .filter-btn:hover:not(.active) {
+            background-color: var(--interactive-bg-hover);
+            transform: scale(1.05);
+        }
+
+        /* --- Project Modal --- */
+        #project-modal { transition: opacity 0.5s ease-out; }
+        #project-modal.is-visible { opacity: 1; pointer-events: auto; }
+        #project-modal.is-visible #modal-content { transform: scale(1); }
+        #modal-content {
+            background-color: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .no-scroll { overflow: hidden; }
+
+        /* --- Skills Section --- */
+        .skill-tag { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px -2px rgba(0,0,0,0.1);
+        }
+        .tag-blue { background-color: rgba(0, 122, 255, 0.1); color: #007aff; }
+        .tag-green { background-color: rgba(52, 199, 89, 0.1); color: #34c759; }
+        .tag-orange { background-color: rgba(255, 149, 0, 0.1); color: #ff9500; }
+        .tag-red { background-color: rgba(255, 59, 48, 0.1); color: #ff3b30; }
+        .tag-purple { background-color: rgba(175, 82, 222, 0.1); color: #af52de; }
+        .tag-teal { background-color: rgba(90, 200, 250, 0.15); color: #5ac8fa; }
+        .tag-yellow { background-color: rgba(255, 204, 0, 0.15); color: #ffcc00; }
+
+        body.dark-mode .tag-blue { background-color: rgba(10, 132, 255, 0.2); color: #0a84ff; }
+        body.dark-mode .tag-green { background-color: rgba(48, 209, 88, 0.2); color: #30d158; }
+        body.dark-mode .tag-orange { background-color: rgba(255, 159, 10, 0.2); color: #ff9f0a; }
+        body.dark-mode .tag-red { background-color: rgba(255, 69, 58, 0.2); color: #ff453a; }
+        body.dark-mode .tag-purple { background-color: rgba(191, 90, 242, 0.2); color: #bf5af2; }
+        body.dark-mode .tag-teal { background-color: rgba(100, 210, 255, 0.2); color: #64d2ff; }
+        body.dark-mode .tag-yellow { background-color: rgba(255, 214, 10, 0.2); color: #ffd60a; }
+
+        /* --- Accordion --- */
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--interactive-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+        }
+        details > summary:hover { background-color: var(--interactive-bg-hover); }
+        details > summary::-webkit-details-marker { display: none; }
+        details .accordion-content {
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), padding 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            max-height: 0;
+            padding-top: 0;
+        }
+        details[open] .accordion-content {
+            max-height: 500px; /* Adjust as needed */
+            padding-top: 1rem;
+        }
+        details .accordion-icon { transition: transform 0.3s ease; }
+        details[open] > summary .accordion-icon { transform: rotate(90deg); }
+
+    </style>
+</head>
+<body class="dark-mode"> <!-- Default to dark mode -->
+
+    <!-- SVG Filter for Blob Effect -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+            <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+    </svg>
+
+    <div id="liquid-bg-container">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
+
+    <!-- Main content container -->
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12">
+        
+        <header class="text-center mb-10 sm:mb-16">
+            <h1 id="main-title" class="animated-header text-5xl sm:text-6xl md:text-8xl font-bold" style="color: var(--header-color);">
+                Hadi
+            </h1>
+            <!-- UPDATED: Added a span for the typing animation -->
+            <p id="main-subtitle-wrapper" class="animated-header text-lg sm:text-xl md:text-2xl mt-3 tracking-wide h-10 flex items-center justify-center" style="color: var(--text-color-secondary); transition-delay: 0.2s;">
+                <span id="main-subtitle"></span>
+                <span class="typing-cursor"></span>
+            </p>
+        </header>
+
+        <!-- Navigation with integrated theme switcher -->
+        <nav id="navigation" class="relative rounded-[2rem] sm:rounded-[2.5rem] flex flex-wrap justify-center items-center gap-1 sm:gap-2 md:gap-4 p-2">
+            <div id="nav-indicator" class="rounded-[1.75rem] sm:rounded-[2.25rem]"></div>
+            <button data-section="about" class="nav-button px-4 py-2 sm:px-5 rounded-full text-sm font-semibold flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                <span class="nav-text">Tentang Saya</span>
+            </button>
+            <button data-section="projects" class="nav-button px-4 py-2 sm:px-5 rounded-full text-sm font-semibold flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>
+                <span class="nav-text">Proyek</span>
+            </button>
+            <button data-section="skills" class="nav-button px-4 py-2 sm:px-5 rounded-full text-sm font-semibold flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+                <span class="nav-text">Keahlian</span>
+            </button>
+            <button data-section="contact" class="nav-button px-4 py-2 sm:px-5 rounded-full text-sm font-semibold flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                <span class="nav-text">Kontak</span>
+            </button>
+            <!-- Separator -->
+            <div class="h-5 w-px bg-gray-400/50 mx-2"></div>
+            <!-- Integrated Theme Switcher -->
+            <button id="theme-switcher" aria-label="Ganti Tema" class="nav-button relative p-3 rounded-full grid place-items-center">
+                <svg class="h-6 w-6 sm:h-7 sm:w-7 theme-switcher-icon sun col-start-1 row-start-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+                <svg class="h-6 w-6 sm:h-7 sm:w-7 theme-switcher-icon moon col-start-1 row-start-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                </svg>
+            </button>
+        </nav>
+
+        <!-- Content Panels -->
+        <main id="content-container" class="w-full max-w-4xl mt-10">
+            <section id="about" class="content-section glass-panel p-6 sm:p-8 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem]">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--header-color);">Tentang Saya</h2>
+                <p class="leading-relaxed text-base sm:text-lg" style="color: var(--text-color-secondary);">
+                    Halo! Saya Hadi, seorang kreator visual berusia 19 tahun dengan hasrat untuk bercerita. Sejak kecil, saya selalu terpesona dengan cara gambar dan suara bisa menyusun narasi, dan kini saya mendedikasikan diri untuk mengubah konsep mentah menjadi karya yang memukau dan berdampak.
+                </p>
+                 <p class="mt-4 leading-relaxed text-base sm:text-lg" style="color: var(--text-color-secondary);">
+                    Keahlian utama saya adalah video editing, namun saya juga mendalami dunia desain UI/UX dan pengembangan web, yang memungkinkan saya melihat gambaran besar dan memastikan setiap titik sentuh digital terasa kohesif dan intuitif.
+                </p>
+                <div class="mt-8 space-y-4">
+                    <details>
+                        <summary class="text-base font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 accordion-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            Latar Belakang Pendidikan
+                        </summary>
+                        <div class="accordion-content text-base" style="color: var(--text-color-secondary);">
+                            <div class="border-l-2 pl-4 ml-2" style="border-color: var(--text-color-secondary);">
+                                <p class="font-semibold" style="color: var(--text-color);">SMK 1 Perguruan Cikini</p>
+                                <p>Jurusan: Teknik Komputer dan Jaringan (TKJ)</p>
+                                <p>Target Lulus: 2025</p>
+                            </div>
+                        </div>
+                    </details>
+                    <details>
+                        <summary class="text-base font-semibold">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 accordion-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                            Pengalaman Kerja
+                        </summary>
+                        <div class="accordion-content space-y-4 text-base" style="color: var(--text-color-secondary);">
+                             <div class="border-l-2 pl-4 ml-2" style="border-color: var(--text-color-secondary);">
+                                <p class="font-semibold" style="color: var(--text-color);">PT. PLN Indonesia Power (Intern)</p>
+                                <p>Posisi: HAR/INSTRUMENT</p>
+                                <p>Oktober 2023 - Januari 2024</p>
+                            </div>
+                             <div class="border-l-2 pl-4 ml-2" style="border-color: var(--text-color-secondary);">
+                                <p class="font-semibold" style="color: var(--text-color);">PT. Usaha Jayamas Bhakti (Intern)</p>
+                                <p>Posisi: IT Research & Development</p>
+                                <!-- UPDATED: Changed date to be in the past for logical timeline -->
+                                <p>Februari 2024 - April 2024</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+            
+            <section id="projects" class="content-section glass-panel p-6 sm:p-8 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem]">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--header-color);">Proyek Unggulan</h2>
+                <div id="project-filters" class="flex flex-wrap justify-center gap-2 mb-8">
+                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-semibold active" data-filter="all">Semua</button>
+                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-semibold" data-filter="video">Video</button>
+                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-semibold" data-filter="ui-ux">UI/UX</button>
+                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-semibold" data-filter="art">Seni</button>
+                </div>
+                <!-- UPDATED: Grid now populated by JS, but this is the structure -->
+                <div id="project-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Project cards will be dynamically inserted here by JavaScript -->
+                </div>
+            </section>
+            
+            <section id="skills" class="content-section glass-panel p-6 sm:p-8 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem]">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--header-color);">Keahlian & Teknologi</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3" style="color: var(--header-color);">Produksi Video & Visual</h3>
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-blue">Adobe Premiere Pro</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-teal">CapCut</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-orange">Adobe Illustrator</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-blue">Adobe Photoshop</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-green">Canva</span>
+                        </div>
+                    </div>
+                     <div>
+                        <h3 class="text-xl font-semibold mb-3" style="color: var(--header-color);">Desain UI/UX</h3>
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-purple">UI/UX Design</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-red">Figma</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-purple">Adobe XD</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3" style="color: var(--header-color);">Pengembangan Web</h3>
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-orange">HTML</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-blue">CSS</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-yellow">JavaScript</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-purple">PHP</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-blue">Python</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-teal">MySQL</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-red">Laravel</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-green">Responsive Design</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3" style="color: var(--header-color);">IT & Jaringan</h3>
+                        <div class="flex flex-wrap gap-2 sm:gap-3">
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-red">Basic Server Config</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-orange">Server Management</span>
+                            <span class="skill-tag text-sm font-medium px-3 py-1 rounded-full tag-teal">Mikrotik Config</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REFINED: Contact Section -->
+            <section id="contact" class="content-section glass-panel p-6 sm:p-8 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem]">
+                <h2 class="text-3xl font-bold mb-4 text-center" style="color: var(--header-color);">Hubungi Saya</h2>
+                <p class="mb-8 text-base sm:text-lg text-center max-w-2xl mx-auto" style="color: var(--text-color-secondary);">
+                    Tertarik untuk berkolaborasi atau memiliki pertanyaan? Jangan ragu untuk menghubungi saya melalui salah satu platform di bawah ini.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Direct Contact Card -->
+                    <div class="p-6 rounded-2xl" style="background-color: var(--interactive-bg);">
+                        <h4 class="text-sm font-bold tracking-widest uppercase mb-4 text-center" style="color: var(--text-color-secondary);">Komunikasi Langsung</h4>
+                        <div class="flex items-center justify-center gap-4">
+                            <a href="mailto:hadiprasetia7@gmail.com" target="_blank" rel="noopener noreferrer" title="Email" class="p-4 rounded-full transition-all duration-300 hover:scale-110" style="background-color: var(--interactive-bg-hover);">
+                                <svg class="w-7 h-7" style="color: var(--text-color);" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                            </a>
+                            <a href="https://wa.me/6287821991710" target="_blank" rel="noopener noreferrer" title="WhatsApp" class="p-4 rounded-full bg-green-500 text-white transition-all duration-300 hover:scale-110 hover:bg-green-600">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 4.315 1.847 6.062l-1.011 3.697 3.82-1.004z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Social & Profiles Card -->
+                    <div class="p-6 rounded-2xl" style="background-color: var(--interactive-bg);">
+                        <h4 class="text-sm font-bold tracking-widest uppercase mb-4 text-center" style="color: var(--text-color-secondary);">Profil & Sosial</h4>
+                        <div class="flex items-center justify-center gap-4 flex-wrap">
+                             <a href="https://instagram.com/idhescobar_" target="_blank" rel="noopener noreferrer" title="Instagram" class="p-4 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 text-white transition-all duration-300 hover:scale-110 hover:opacity-90">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a5 5 0 100 10 5 5 0 000-10zm-7 5a7 7 0 1114 0 7 7 0 01-14 0z" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M14.003 5.5a.5.5 0 100-1 .5.5 0 000 1z" clip-rule="evenodd"></path></svg>
+                            </a>
+                            <a href="https://github.com/Harsia-ID" target="_blank" rel="noopener noreferrer" title="GitHub" class="p-4 rounded-full bg-gray-800 text-white transition-all duration-300 hover:scale-110 hover:bg-gray-700">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.418 2.865 8.166 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.745 0 .267.18.577.688.48C17.135 18.166 20 14.418 20 10A10 10 0 0010 0z" clip-rule="evenodd" /></svg>
+                            </a>
+                             <a href="https://www.linkedin.com/in/hadi-prasetia-173034375/" target="_blank" rel="noopener noreferrer" title="LinkedIn" class="p-4 rounded-full bg-blue-700 text-white transition-all duration-300 hover:scale-110 hover:bg-blue-600">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-.996-.017-2.277-1.387-2.277-1.389 0-1.601 1.086-1.601 2.206v4.249H8.014V8h2.56v1.17h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.337 6.835a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM6.67 16.338H3.99V8h2.68v8.338zM18 0H2C.895 0 0 .895 0 2v16c0 1.105.895 2 2 2h16c1.105 0 2-.895 2-2V2c0-1.105-.895-2-2-2z" clip-rule="evenodd" /></svg>
+                            </a>
+                            <a href="https://paypal.me/harsianiah" target="_blank" rel="noopener noreferrer" title="PayPal" class="p-4 rounded-full bg-blue-800 text-white transition-all duration-300 hover:scale-110 hover:bg-blue-700">
+                               <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M8.22.428a.75.75 0 00-.33.626c-.023.153-.048.305-.076.456-.538 2.842-2.353 4.13-4.794 4.13H.75a.75.75 0 00-.75.75v1.132a.75.75 0 00.75.75h1.868c2.11 0 3.32-1.03 3.824-3.342.06-.275.12-.552.18-.832.06-.279.123-.557.188-.834.065-.278.13-.556.197-.834.02-.08.04-.16.06-.24a.75.75 0 00-.826-.938zM14.03 5.25a.75.75 0 00-.75.75v5.337a.75.75 0 01-.75.75h-2.188a.75.75 0 00-.75.75v1.132a.75.75 0 00.75.75h2.188a2.25 2.25 0 002.25-2.25V6a.75.75 0 00-.75-.75zM17.152.428a.75.75 0 00-1.058.21l-4.265 6.03a.75.75 0 00.628 1.164h2.348c2.11 0 3.32-1.03 3.824-3.342.06-.275.12-.552.18-.832.06-.279.123-.557.188-.834.065-.278.13-.556.197-.834a.75.75 0 00-.822-.852z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-16 text-sm" style="color: var(--text-color-secondary);">
+            <p>&copy; <span id="year"></span> Hadi. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Project Modal Structure -->
+    <div id="project-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div id="modal-content" class="relative w-full max-w-lg sm:max-w-xl rounded-2xl shadow-xl transform scale-95 overflow-hidden pt-12">
+            <!-- macOS-style buttons -->
+            <div class="absolute top-4 left-4 flex gap-2">
+                <button id="modal-close-btn" aria-label="Tutup Modal" class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center group">
+                    <svg class="w-2 h-2 text-red-900 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div class="w-3.5 h-3.5 rounded-full bg-yellow-500"></div>
+                <div class="w-3.5 h-3.5 rounded-full bg-green-500"></div>
+            </div>
+            <div class="p-4 sm:p-6 md:p-8 pt-0 max-h-[80vh] overflow-y-auto">
+                <img id="modal-image" src="" alt="Deskripsi Proyek" class="w-full h-auto max-h-64 sm:max-h-80 object-cover rounded-2xl mb-6" onerror="this.src='https://placehold.co/600x400/2c2c2e/a1a1a6?text=Image+Not+Found'">
+                <h3 id="modal-title" class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--header-color);"></h3>
+                <div id="modal-description" class="leading-relaxed text-sm sm:text-base" style="color: var(--text-color-secondary);"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Global State & Data ---
+            let activeSectionId = 'about';
+            const projectData = [
+                { category: "video", title: "Video Profil V3", description: "Versi ketiga dari video profil yang menonjolkan pendekatan sinematik dan penceritaan visual yang mendalam. Proyek ini berfokus pada color grading yang dramatis dan editing yang ritmis untuk menciptakan dampak emosional yang kuat.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/v3.png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-sky-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 001.553.832l3-2a1 1 0 000-1.664l-3-2z" /></svg>`, shortDesc: "Pendekatan sinematik." },
+                { category: "ui-ux", title: "Desain Aplikasi Mobile", description: "Studi kasus lengkap untuk aplikasi mobile gaya hidup, dimulai dari riset pengguna, pembuatan user flow, wireframing, hingga desain antarmuka (UI) yang bersih dan modern. Prototipe interaktif dibuat menggunakan Figma untuk mensimulasikan pengalaman pengguna secara nyata.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/uiux.png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2H5zm3 1a1 1 0 000 2h6a1 1 0 100-2H8z" clip-rule="evenodd" /></svg>`, shortDesc: "Studi kasus UI/UX." },
+                { category: "video", title: "Video Musik Eksperimental", description: "Sebuah proyek video musik yang mengeksplorasi visual abstrak dan sureal. Menggunakan teknik editing non-linear dan efek visual dari After Effects untuk menciptakan pengalaman audio-visual yang unik dan imersif.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/v1.png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-rose-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a1.5 1.5 0 01.5 2.915V14.5a1.5 1.5 0 11-3 0V6.415A1.5 1.5 0 0110 3.5z" /><path d="M10 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg>`, shortDesc: "Visual abstrak & sureal." },
+                { category: "video", title: "Animasi Motion Graphics", description: "Kompilasi animasi motion graphics untuk berbagai kebutuhan, termasuk intro video, transisi, dan visualisasi data. Proyek ini menunjukkan keahlian dalam sinkronisasi gerakan dengan audio dan tipografi kinetik.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/1.png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V3a1 1 0 00-1-1H5zM5 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1H5zM5 14a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1H5zM15 2a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V3a1 1 0 00-1-1h-1zM15 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1h-1zM15 14a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1h-1zM10 2a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V3a1 1 0 00-1-1h-1zM10 8a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1V9a1 1 0 00-1-1h-1zM10 14a1 1 0 00-1 1v1a1 1 0 001 1h1a1 1 0 001-1v-1a1 1 0 00-1-1h-1z" clip-rule="evenodd" /></svg>`, shortDesc: "Tipografi kinetik." },
+                { category: "video", title: "Kompilasi Visual V2", description: "Revisi dari kompilasi visual dengan tempo yang lebih cepat dan color grading yang lebih berani. Proyek ini dirancang untuk media sosial, dengan fokus pada retensi audiens dalam beberapa detik pertama.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/v2r.png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-cyan-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>`, shortDesc: "Editing untuk media sosial." },
+                { category: "art", title: "Proyek Seni Digital 'Bocil'", description: "Sebuah karya seni digital personal yang menggabungkan ilustrasi dan elemen fotografi. Proyek ini mengeksplorasi tema nostalgia dan kenangan masa kecil melalui komposisi visual yang artistik dan penuh makna.", image: "https://raw.githubusercontent.com/Harsia-ID/design/refs/heads/main/BOCIL%20(1944%20x%202592%20piksel).png", icon: `<svg class="w-6 h-6 flex-shrink-0 text-lime-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>`, shortDesc: "Eksplorasi nostalgia." },
+            ];
+            
+            // --- DOM Elements ---
+            const elements = {
+                navButtons: document.querySelectorAll('.nav-button[data-section]'),
+                navIndicator: document.getElementById('nav-indicator'),
+                contentContainer: document.getElementById('content-container'),
+                yearSpan: document.getElementById('year'),
+                themeSwitcher: document.getElementById('theme-switcher'),
+                modal: document.getElementById('project-modal'),
+                modalOverlay: document.getElementById('modal-overlay'),
+                modalCloseBtn: document.getElementById('modal-close-btn'),
+                modalImage: document.getElementById('modal-image'),
+                modalTitle: document.getElementById('modal-title'),
+                modalDescription: document.getElementById('modal-description'),
+                projectFilterButtons: document.querySelectorAll('#project-filters .filter-btn'),
+                projectGrid: document.getElementById('project-grid'),
+                accordions: document.querySelectorAll('#about details'),
+                subtitleSpan: document.getElementById('main-subtitle'),
+            };
+
+            // --- Functions ---
+            
+            function typewriter(element, text, delay = 100) {
+                let i = 0;
+                element.textContent = '';
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, delay);
+                    }
+                }
+                type();
+            }
+
+            function updateNavIndicator(button) {
+                if (!button) return;
+                elements.navIndicator.style.width = `${button.offsetWidth}px`;
+                elements.navIndicator.style.left = `${button.offsetLeft}px`;
+            }
+
+            function updateContentContainerHeight(section) {
+                if (!section) return;
+                setTimeout(() => {
+                    elements.contentContainer.style.height = `${section.scrollHeight}px`;
+                }, 50); // Small delay for animations
+            }
+
+            function switchSection(sectionId) {
+                if (sectionId === activeSectionId && document.getElementById(sectionId).classList.contains('is-active')) return;
+
+                document.querySelector('.nav-button.is-active')?.classList.remove('is-active');
+                document.querySelector('.content-section.is-active')?.classList.remove('is-active');
+                
+                const newActiveButton = document.querySelector(`.nav-button[data-section="${sectionId}"]`);
+                const newActiveSection = document.getElementById(sectionId);
+
+                newActiveButton?.classList.add('is-active');
+                newActiveSection?.classList.add('is-active');
+                
+                updateNavIndicator(newActiveButton);
+                updateContentContainerHeight(newActiveSection);
+
+                activeSectionId = sectionId;
+            }
+
+            function openModal(project) {
+                elements.modalImage.src = project.image;
+                elements.modalTitle.textContent = project.title;
+                elements.modalDescription.textContent = project.description;
+                
+                elements.modal.classList.add('is-visible');
+                document.body.classList.add('no-scroll');
+            }
+
+            function closeModal() {
+                elements.modal.classList.remove('is-visible');
+                document.body.classList.remove('no-scroll');
+            }
+
+            function filterProjects(filter) {
+                const cards = document.querySelectorAll('#project-grid .project-card');
+                cards.forEach(card => {
+                    const category = card.dataset.category;
+                    const shouldShow = filter === 'all' || filter === category;
+                    card.classList.toggle('hidden', !shouldShow);
+                });
+                updateContentContainerHeight(document.getElementById('projects'));
+            }
+            
+            // NEW: Function to create and append project cards
+            function populateProjectGrid() {
+                elements.projectGrid.innerHTML = ''; // Clear existing grid
+                projectData.forEach(project => {
+                    const card = document.createElement('button');
+                    card.className = 'project-card text-left p-4 rounded-2xl';
+                    card.dataset.category = project.category;
+                    
+                    // Set inner HTML with image and content
+                    card.innerHTML = `
+                        <img src="${project.image}" alt="${project.title}" class="project-image" loading="lazy" onerror="this.src='https://placehold.co/400x250/2c2c2e/a1a1a6?text=Image+Error'">
+                        <div class="flex items-center gap-3 mb-2">
+                            ${project.icon}
+                            <h3 class="font-semibold" style="color: var(--header-color);">${project.title}</h3>
+                        </div>
+                        <p class="text-sm" style="color: var(--text-color-secondary);">${project.shortDesc}</p>
+                    `;
+                    
+                    card.addEventListener('click', () => openModal(project));
+                    elements.projectGrid.appendChild(card);
+                });
+            }
+
+            // --- Event Listeners ---
+
+            elements.navButtons.forEach(button => {
+                button.addEventListener('click', () => switchSection(button.dataset.section));
+            });
+
+            elements.themeSwitcher.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+
+            elements.modalOverlay.addEventListener('click', closeModal);
+            elements.modalCloseBtn.addEventListener('click', closeModal);
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && elements.modal.classList.contains('is-visible')) closeModal();
+            });
+
+            elements.projectFilterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    elements.projectFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterProjects(button.dataset.filter);
+                });
+            });
+            
+            elements.accordions.forEach(accordion => {
+                accordion.addEventListener('toggle', () => {
+                    if (activeSectionId === 'about') {
+                        updateContentContainerHeight(document.getElementById('about'));
+                    }
+                });
+            });
+            
+            window.addEventListener('resize', () => {
+                updateNavIndicator(document.querySelector('.nav-button.is-active'));
+                updateContentContainerHeight(document.getElementById(activeSectionId));
+            });
+
+            // --- Initializations ---
+            elements.yearSpan.textContent = new Date().getFullYear();
+            populateProjectGrid(); // Create project cards on load
+            
+            setTimeout(() => {
+                document.querySelectorAll('.animated-header').forEach(el => el.classList.add('is-visible'));
+                // Start typing animation after header is visible
+                setTimeout(() => typewriter(elements.subtitleSpan, 'Kreator Visual & Problem Solver'), 300);
+            }, 100);
+
+            switchSection('about'); // Set initial state
+        });
+    </script>
+</body>
+</html>
